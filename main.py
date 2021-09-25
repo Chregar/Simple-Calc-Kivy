@@ -1,86 +1,97 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.properties import ObjectProperty
 from kivy.lang import Builder
 from kivy.core.window import Window
 
-Window.size = (300,450)
+# Set the app size
+Window.size = (300, 450)
+
+# Designate Our .kv design file
 Builder.load_file('demo.kv')
 
+
 class MyLayout(Widget):
-
-    '''Clear button'''
     def clear(self):
-        self.ids.calc_input.text = "0"
+        self.ids.calc_input.text = '0'
 
-    '''Press button, numbers'''
-    def press_button(self,button):
-        #Create a variable that contains what was already in the Input box
+    # Create a button pressing function
+    def button_press(self, button):
+        # create a variable that contains whatever was in the text box already
         prior = self.ids.calc_input.text
 
-        #Test for error
+        # Test for error first
         if "Error" in prior:
-            prior = ""
+            prior = ''
 
-        #Determine if 0 is sitting there
+        # determine if 0 is sitting there
         if prior == "0":
-            self.ids.calc_input.text = ""
-            self.ids.calc_input.text = f"{button}"
+            self.ids.calc_input.text = ''
+            self.ids.calc_input.text = f'{button}'
         else:
-            self.ids.calc_input.text = f"{prior}{button}"
+            self.ids.calc_input.text = f'{prior}{button}'
 
+    # Create Function to remove last character in text box
     def remove(self):
-        #Function to remove last char in textbox
         prior = self.ids.calc_input.text
-        #Remove last item
+        # Remove The last item in the textbox
         prior = prior[:-1]
-        #Output back to user
+        # Output back to the textbox
         self.ids.calc_input.text = prior
 
-    def posneg(self):
-        #Create function to make textbox positive or negative
+    # Create function to make text box positive or negative
+    def pos_neg(self):
         prior = self.ids.calc_input.text
-        #Test to check for negative
+        # Test to see if there's a - sign already
         if "-" in prior:
-            self.ids.calc_input.text = f'{prior.replace("-","")}'
+            self.ids.calc_input.text = f'{prior.replace("-", "")}'
         else:
             self.ids.calc_input.text = f'-{prior}'
 
-
-
+    # Create decimal function
     def dot_button(self):
         prior = self.ids.calc_input.text
-        if "." in prior:
+        # Split out text box by +
+        num_list = prior.split("+")
+
+        if "+" in prior and "." not in num_list[-1]:
+            # Add a decimal to the end of the text
+            prior = f'{prior}.'
+            # Output back to the text box
+            self.ids.calc_input.text = prior
+
+        elif "." in prior:
             pass
         else:
-            #Add a decimal point to the end
-            prior = f"{prior}."
-            #Output back to the textbox
+            # Add a decimal to the end of the text
+            prior = f'{prior}.'
+            # Output back to the text box
             self.ids.calc_input.text = prior
-    '''Math signs Button'''
-    def math_sign(self,sign):
-        #Create a variable that contains what was already in the Input box
-        prior = self.ids.calc_input.text
-        #Slap a plus sign to the text box
-        self.ids.calc_input.text = f"{prior}{sign}"
 
+    # create addition function
+    def math_sign(self, sign):
+        # create a variable that contains whatever was in the text box already
+        prior = self.ids.calc_input.text
+
+        # slap a plus sign to the text box
+        self.ids.calc_input.text = f'{prior}{sign}'
+
+    # create equals to function
     def equal(self):
-        #Create a variable that contains what was already in the Input box
         prior = self.ids.calc_input.text
-
-        #Error handling
+        # Error Handling
         try:
-            #Evaluate the math from the textbox
+            # Evaluate the math from the text box
             answer = eval(prior)
-            #Output the answer
+            # Output the answer
             self.ids.calc_input.text = str(answer)
         except:
-            self.ids.calc_input.text = 'Error'
+            self.ids.calc_input.text = "Error"
 
-class CalcApp(App):
+class CalculatorApp(App):
     def build(self):
-        Window.clearcolor = (0,0,0,1)
         return MyLayout()
 
-if __name__ == "__main__":
-    CalcApp().run()
 
+if __name__ == '__main__':
+    CalculatorApp().run()
